@@ -1,3 +1,10 @@
+body {
+    background-color: #1A2130; /* Replace with your desired color */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -21,4 +28,8 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.gradientbg{
+  background: linear-gradient(45deg, #83B4FF, #FDFFE2);
 }

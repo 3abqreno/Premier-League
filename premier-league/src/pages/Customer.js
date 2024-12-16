@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from '../components/Navbar/Navbar';
 
 const Customer = () => {
     const handleDashboardClick = () => {
@@ -8,9 +9,7 @@ const Customer = () => {
 
     return (
         <div>
-            <h1>Welcome Back, User!</h1>
-            <p>You now have access to specific details.</p>
-            <button onClick={handleDashboardClick}>View Dashboard</button>
+            
         </div>
     );
 };
