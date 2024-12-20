@@ -3,7 +3,7 @@ import logo from "../../assets/Egyptian_Premier_League_logo_2023.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [role, setRole] = useState('manager'); // Default role
+  const [role, setRole] = useState('guest'); // Default role
 
   useEffect(() => {
     const storedRole = localStorage.getItem('role');
@@ -11,6 +11,13 @@ const Navbar = () => {
       setRole(storedRole);
     }
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.setItem('role', 'guest');
+    setRole('guest');
+    window.location.href = '/';
+  };
 
   const renderLinks = () => {
     switch (role) {
@@ -113,6 +120,16 @@ const Navbar = () => {
               </a>
             </li>
             {renderLinks()}
+            {role !== 'guest' && (
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="block py-2 px-3 text-white hover:text-black"
+                >
+                  Logout
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </div>

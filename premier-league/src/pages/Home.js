@@ -6,19 +6,23 @@ import Manager from './Manager';
 // A function to check user login status (mock implementation)
 const checkUserStatus = () => {
   // Example: Check localStorage for a token
-  // return localStorage.getItem("token") ? true : false;
-  return true;
+  return localStorage.getItem("token") ? true : false;
+  // return true;
 };
 
 // Main Page Component
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState("manager");
+  const [role, setRole] = useState("guest");
 
   // Check if user is logged in on component load
   useEffect(() => {
     const userStatus = checkUserStatus();
     setIsLoggedIn(userStatus);
+    const storedRole = localStorage.getItem('role');
+    if (storedRole) {
+      setRole(storedRole);
+    }
   }, []);
 
   const renderLinks = () => {
@@ -40,7 +44,7 @@ const Home = () => {
       case true:
         return renderLinks();
       case false:
-        renderLinks();
+        return renderLinks();
       default:
         return (
           <div>

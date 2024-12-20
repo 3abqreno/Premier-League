@@ -8,7 +8,7 @@ const Reserve = () => {
     const { matchId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
-    const { IsManager } = location.state || {};
+    const { IsManager } = location.state || false;
     const [matchDetails, setMatchDetails] = useState(null);
 
     useEffect(() => {
@@ -62,7 +62,7 @@ const Reserve = () => {
                 inReserve={true}
             />
             <p className='text-2xl gradientbg rounded-md mb-2 p-2 text-center font-bold w-full'>Vacant Seats</p>
-            <Seats vacantSeats={matchDetails.vacantSeats} IsManager={IsManager} />
+            <Seats vacantSeats={matchDetails.vacantSeats} IsManager={IsManager} IsCreate={false} />
         </div>
     );
 };

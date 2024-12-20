@@ -2,21 +2,22 @@ import React, { useState, useEffect } from "react";
 
 const fetchSeats = () => {
     // Simulating API response: 0 = available, 1 = reserved
-    return [
-        [0, 1, 0, 0, 1, 0, 1, 0, 0, 0,], // 8 columns
-        [1, 1, 0, 1, 0, 0, 0, 1, 1, 1,],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0,],
-        [0, 1, 1, 0, 0, 0, 1, 1, 1, 1,],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
-    ];
+    // return [
+    //     [0, 1, 0, 0, 1, 0, 1, 0, 0, 0,], // 8 columns
+    //     [1, 1, 0, 1, 0, 0, 0, 1, 1, 1,],
+    //     [0, 0, 0, 1, 1, 1, 0, 0, 0, 0,],
+    //     [0, 1, 1, 0, 0, 0, 1, 1, 1, 1,],
+    //     [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
+    //     [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
+    //     [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
+    //     [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
+    //     [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
+    //     [0, 0, 1, 0, 1, 0, 0, 0, 0, 0,],
+    // ];
+    return [];
 };
 
-const SeatGrid = ({vacantSeats,IsManager}) => {
+const SeatGrid = ({vacantSeats,IsManager, IsCreate}) => {
     const [seats, setSeats] = useState([]); // 2D Array of seats
     const [selectedSeats, setSelectedSeats] = useState(new Set()); // Store selected seats
     const [availableCount, setAvailableCount] = useState(0); // Available seats count
@@ -77,9 +78,9 @@ const SeatGrid = ({vacantSeats,IsManager}) => {
         <div className="flex justify-center items-center h-auto p-6 w-full">
             <div className="rounded-md p-6">
                 {/* Seat Grid */}
-                <div className="text-2xl text-center mb-4 text-white font-bold">
+                {!IsCreate && (<div className="text-2xl text-center mb-4 text-white font-bold">
                         Available Seats: <span className="font-bold">{availableCount}</span>
-                    </div>
+                    </div>)}
                 <div
                     className="grid gap-2 justify-center mb-4"
                     style={{ gridTemplateColumns: `repeat(${columns}, 2.5rem)` }}
@@ -96,7 +97,7 @@ const SeatGrid = ({vacantSeats,IsManager}) => {
                             return (
                                 <div
                                     key={seatKey}
-                                    onClick={() => handleSeatClick(rowIndex, colIndex)}
+                                    onClick={() => IsCreate ? handleSeatClick(rowIndex, colIndex): null}
                                     className={`w-10 h-10 flex items-center justify-center rounded ${IsManager ? 'cursor-default': "cursor-pointer hover:opacity-80"} transition-colors text-sm font-bold
                     ${seat === 1
                                             ? "bg-red-500 text-white" // Reserved
@@ -115,7 +116,7 @@ const SeatGrid = ({vacantSeats,IsManager}) => {
                 </div>
 
                 {/* Reserve Button */}
-                {!IsManager && (<div className="text-center">
+                {!IsManager && !IsCreate && (<div className="text-center">
                     <button
                         onClick={handleReserve}
                         disabled={selectedSeats.size === 0}
