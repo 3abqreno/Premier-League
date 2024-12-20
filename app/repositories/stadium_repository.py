@@ -14,3 +14,19 @@ class StadiumRepository(BaseRepository[Stadium, StadiumCreate, StadiumUpdate]):
             .filter(self.model.name == name)
             .first()
         )
+
+    def get_all(self, skip: int = 0, limit: int = 100) -> List[Stadium]:
+        return (
+            self.db.query(self.model)
+            .order_by(self.model.name)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def create(self, schema: StadiumCreate) -> Stadium:
+        db_obj = self.model(**schema.model_dump())
+        self.db.add(db_obj)
+        self.db.commit()
+        self.db.refresh(db_obj)
+        return db_obj
