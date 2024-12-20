@@ -2,9 +2,10 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
-from app.core.security import get_password_hash
-from app.core.security import verify_password
 from .base import BaseRepository
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
     def __init__(self, db: Session):
@@ -28,7 +29,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
     def create(self, schema: UserCreate) -> User:
         db_obj = User(
             **schema.model_dump(exclude={'password'}),
-            password=get_password_hash(schema.password)
+            password=pwd_context.hash(schema.password)
         )
         self.db.add(db_obj)
         self.db.commit()
@@ -47,6 +48,6 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         user = self.get_by_username(username)
         if not user:
             return None
-        if not verify_password(password, user.password):
+        if not pwd_context.verify(password, user.password):
             return None
         return user

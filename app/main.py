@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1 import auth
+from app.api.v1 import auth, team, match
 
 app = FastAPI(title="Football Booking System")
 
@@ -15,8 +15,9 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(team.router, prefix="/team", tags=["Teams"])
+app.include_router(match.router, prefix="/match", tags=["Matches"])
 # app.include_router(user.router, prefix="/user", tags=["Users"])
-# app.include_router(match.router, prefix="/match", tags=["Matches"])
 # app.include_router(stadium.router, prefix="/stadium", tags=["Stadiums"])
 # app.include_router(reservation.router, prefix="/reservation", tags=["Reservations"])
 

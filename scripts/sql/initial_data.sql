@@ -29,6 +29,6 @@ ON CONFLICT DO NOTHING;
 
 -- Insert a sample stadium
 INSERT INTO stadiums (name, rows, columns) VALUES 
-    ('Main Stadium', 20, 30),
-    ('Secondary Stadium', 15, 25)
+    ('Main Stadium', 20, 5),
+    ('Secondary Stadium', 15, 8)
 ON CONFLICT DO NOTHING;

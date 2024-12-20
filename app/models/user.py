@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, Date
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.base import Base
 
@@ -18,3 +19,9 @@ class User(Base):
     role = Column(String(20), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     approved = Column(Boolean, default=False)
+    
+    reservations = relationship(
+        "Reservation",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )

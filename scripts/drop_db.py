@@ -1,14 +1,15 @@
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from app.core.config import settings
+from urllib.parse import urlparse
 
 def drop_database():
     # Parse DATABASE_URL
     db_url = urlparse(str(settings.DATABASE_URL))
     db_name = db_url.path[1:]
-    user = db_url.user
+    user = db_url.username
     password = db_url.password
-    host = db_url.host
+    host = db_url.hostname
     port = db_url.port
 
     # Connect to PostgreSQL server
