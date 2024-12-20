@@ -24,10 +24,15 @@ const SeatGrid = ({vacantSeats,IsManager}) => {
     const isLoggedIn = localStorage.getItem("isLoggedIn"); // Check login status
 
     useEffect(() => {
-        const data = fetchSeats();
+        let data;
+        if (vacantSeats && vacantSeats.length > 0) {
+            data = vacantSeats;
+        } else {
+            data = fetchSeats();
+        }
         setSeats(data);
         calculateAvailableSeats(data);
-    }, []);
+    }, [vacantSeats]);
 
     const calculateAvailableSeats = (data) => {
         const count = data.flat().filter((seat) => seat === 0).length;

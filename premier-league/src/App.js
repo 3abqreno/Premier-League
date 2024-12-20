@@ -13,6 +13,7 @@ import Reserve from "./pages/Reserve";
 import UserReservations from "./pages/UserReservations";
 import UpdateProfile from "./pages/UpdateProfile/IpdateProfile";
 import EditMatch from "./pages/EditMatch";
+import AddStadium from "./pages/AddStadium";
 
 const App = () => {
   return (
@@ -67,6 +68,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <EditMatch IsNew={true} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-stadium"
+            element={
+              <ProtectedRoute>
+                <AddStadium/>
               </ProtectedRoute>
             }
           />
