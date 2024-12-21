@@ -5,27 +5,45 @@ from datetime import datetime, timedelta
 from app.db.dependencies import get_db
 from app.core.security import get_current_user
 from app.repositories.reservation_repository import ReservationRepository
-from app.schemas.reservation import ReservationCreate, ReservationResponse
+from app.schemas.reservation import ReservationCreate, ReservationListResponse, ReservationResponse
 from app.models.user import User
 
 router = APIRouter()
 
-@router.post("", response_model=ReservationResponse)
-async def create_reservation(
-    reservation: ReservationCreate,
+@router.post("", response_model=ReservationListResponse)
+async def create_reservations(
+    reservations: List[ReservationCreate],
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    F10: Create a new reservation
+    F10: Create multiple reservations at once
     """
+    if not reservations:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No reservations provided"
+        )
+
+    # Validate all reservations are for the same match
+    match_ids = set(r.match_id for r in reservations)
+    if len(match_ids) > 1:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="All reservations must be for the same match"
+        )
+
     reservation_repo = ReservationRepository(db)
     
     try:
-        return reservation_repo.create_reservation(
+        created_reservations = reservation_repo.create_multiple_reservations(
             user_id=current_user.id,
-            seat_id=reservation.seat_id,
-            match_id=reservation.match_id
+            reservations=reservations
+        )
+        
+        return ReservationListResponse(
+            message="Reservations created successfully",
+            reservations=created_reservations
         )
     except ValueError as e:
         raise HTTPException(
