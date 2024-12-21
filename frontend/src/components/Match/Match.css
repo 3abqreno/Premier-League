@@ -1,0 +1,81 @@
+.club-logo {
+    width: 75px;
+}
+
+.matchcard {
+    background: linear-gradient(45deg, #83B4FF, #FDFFE2);
+    position: relative;
+    overflow: hidden; /* Ensure the overlay doesn't overflow */
+}
+
+.matchcard::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1A2130;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.matchcard:hover::after {
+    opacity: 95%;
+    cursor: pointer;
+}
+
+.matchcard:hover .reserve-button {
+    display: block;
+}
+
+.reserve-button {
+    display: none;
+    width: 40%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FDFFE2;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 2; /* Ensure the button is above the overlay */
+}
+
+.matchcard:hover .edit-button,
+.matchcard:hover .view-button {
+    display: block;
+}
+
+.edit-button,
+.view-button {
+    display: none;
+    width: 40%;
+    background-color: #FDFFE2;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 2; /* Ensure the button is above the overlay */
+}
+
+.edit-button {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translate(-50%, -50%);
+}
+
+.view-button {
+    position: absolute;
+    top: 50%;
+    left: 70%;
+    transform: translate(-50%, -50%);
+}
