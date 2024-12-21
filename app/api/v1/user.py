@@ -4,7 +4,7 @@ from typing import List
 from app.db.dependencies import get_db
 from app.core.security import get_current_user, get_current_admin_user
 from app.repositories.user_repository import UserRepository
-from app.schemas.user import User
+from app.schemas.user import User, UserUpdate
 from app.models.user import User as UserModel
 
 router = APIRouter()
@@ -57,6 +57,38 @@ async def approve_user(
         )
     
     return user_repo.approve_user(user_id)
+
+print("wow")
+
+@router.put("/me", response_model=User)
+async def update_current_user(
+    user_update:    UserUpdate,
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Update current user's information
+    """
+    print("wow")
+    user_repo = UserRepository(db)
+    
+    # Check if email is being updated and is already taken
+    if user_update.email and user_update.email != current_user.email:
+        existing_user = user_repo.get_by_email(user_update.email)
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered"
+            )
+    
+    try:
+        updated_user = user_repo.update_user(current_user.id, user_update)
+        return updated_user
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
 
 @router.delete("/{user_id}", response_model=User)
 async def delete_user(

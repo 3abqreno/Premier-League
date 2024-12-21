@@ -51,3 +51,36 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         if not pwd_context.verify(password, user.password):
             return None
         return user
+
+    def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
+        """
+        Update user information.
+        Only updates the fields that are provided in the user_update schema.
+        """
+        user = self.get(user_id)
+        if not user:
+            return None
+
+        # Get only the fields that were provided (not None)
+        update_data = user_update.model_dump(exclude_unset=True)
+        
+        # If email is being updated, check if it's already taken
+        if 'email' in update_data and update_data['email'] != user.email:
+            existing_user = self.get_by_email(update_data['email'])
+            if existing_user:
+                raise ValueError("Email already registered")
+
+        try:
+            # Update user fields
+            for field, value in update_data.items():
+                # Skip password field if it exists in update_data
+                if field != 'password':
+                    setattr(user, field, value)
+
+            self.db.commit()
+            self.db.refresh(user)
+            return user
+            
+        except Exception as e:
+            self.db.rollback()
+            raise ValueError(f"Error updating user: {str(e)}")
