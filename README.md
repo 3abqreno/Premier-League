@@ -1,7 +1,8 @@
 # premier league
-A FastAPI-based backend system for managing football match bookings.
+A FastAPI-based backend and react frontend system for managing football match bookings.
 
-## Setup
+
+## Backend Setup
 ### 1. Create Virtual Environment
 Create virtual environment
 python -m venv venv
@@ -55,3 +56,25 @@ Default Admin User
 Username: admin
 Password: admin123
 Email: admin@example.com
+
+
+## Frontend Setup
+
+Navigate to the `frontend` directory:
+```
+cd frontend
+```
+
+### 1. Install Dependencies
+Install the necessary packages:
+```
+npm install
+```
+
+### 2. Run the Application
+Start the development server:
+```
+npm start
+```
+
+The frontend application will be available at http://localhost:3000
