@@ -1,10 +1,11 @@
 from typing import List, Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_
 from datetime import datetime
 import uuid
 from app.models.reservation import Reservation
 from app.models.seat import Seat
+from app.models.match import Match
 from app.schemas.reservation import ReservationCreate
 from .base import BaseRepository
 
@@ -12,18 +13,28 @@ class ReservationRepository(BaseRepository[Reservation, ReservationCreate, None]
     def __init__(self, db: Session):
         super().__init__(Reservation, db)
 
-    def get_user_reservations(self, user_id: int) -> List[Reservation]:
+    def get_with_match_details(self, reservation_id: int) -> Optional[Reservation]:
+        """Get reservation with match details"""
         return (
             self.db.query(self.model)
-            .filter(self.model.user_id == user_id)
-            .order_by(self.model.reservation_date.desc())
-            .all()
+            .options(
+                joinedload(self.model.match),
+                joinedload(self.model.seat)
+            )
+            .filter(self.model.id == reservation_id)
+            .first()
         )
 
-    def get_match_reservations(self, match_id: int) -> List[Reservation]:
+    def get_user_reservations(self, user_id: int) -> List[Reservation]:
+        """Get all reservations for a user with match and seat details"""
         return (
             self.db.query(self.model)
-            .filter(self.model.match_id == match_id)
+            .options(
+                joinedload(self.model.match),
+                joinedload(self.model.seat)
+            )
+            .filter(self.model.user_id == user_id)
+            .order_by(self.model.reservation_date.desc())
             .all()
         )
 
@@ -33,10 +44,22 @@ class ReservationRepository(BaseRepository[Reservation, ReservationCreate, None]
         seat_id: int, 
         match_id: int
     ) -> Optional[Reservation]:
-        # Check if seat is available
+        """Create a new reservation"""
+        # Check if seat exists and is available
         seat = self.db.query(Seat).filter(Seat.id == seat_id).first()
-        if not seat or seat.status != "AVAILABLE":
-            return None
+        if not seat:
+            raise ValueError("Seat not found")
+        
+        if seat.status != "AVAILABLE":
+            raise ValueError("Seat is not available")
+
+        # Check if match exists and is in the future
+        match = self.db.query(Match).filter(Match.id == match_id).first()
+        if not match:
+            raise ValueError("Match not found")
+        
+        if match.date_time <= datetime.now():
+            raise ValueError("Cannot reserve seats for past matches")
 
         # Generate unique ticket number
         ticket_number = f"TKT-{uuid.uuid4().hex[:8].upper()}"
@@ -57,22 +80,13 @@ class ReservationRepository(BaseRepository[Reservation, ReservationCreate, None]
             self.db.commit()
             self.db.refresh(reservation)
             return reservation
-        except Exception:
+        except Exception as e:
             self.db.rollback()
-            return None
+            raise ValueError(f"Error creating reservation: {str(e)}")
 
-    def cancel_reservation(self, reservation_id: int, user_id: int) -> bool:
-        reservation = (
-            self.db.query(self.model)
-            .filter(
-                and_(
-                    self.model.id == reservation_id,
-                    self.model.user_id == user_id
-                )
-            )
-            .first()
-        )
-
+    def cancel_reservation(self, reservation_id: int) -> bool:
+        """Cancel a reservation and free up the seat"""
+        reservation = self.get_with_match_details(reservation_id)
         if not reservation:
             return False
 
@@ -87,10 +101,3 @@ class ReservationRepository(BaseRepository[Reservation, ReservationCreate, None]
         except Exception:
             self.db.rollback()
             return False
-
-    def get_by_ticket_number(self, ticket_number: str) -> Optional[Reservation]:
-        return (
-            self.db.query(self.model)
-            .filter(self.model.ticket_number == ticket_number)
-            .first()
-        )

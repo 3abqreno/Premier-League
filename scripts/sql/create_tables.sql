@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     user_id INTEGER REFERENCES users(id),
     seat_id INTEGER REFERENCES seats(id),
     match_id INTEGER REFERENCES matches(id),
-    reservation_date TIMESTAMP NOT NULL,
+    reservation_date TIMESTAMP NOT NULL DEFAULT NOW(),
     ticket_number VARCHAR(50) NOT NULL,
     CONSTRAINT unique_seat_reservation UNIQUE (seat_id, match_id)
 
