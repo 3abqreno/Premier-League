@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Match from '../components/Match/Match';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditMatch = ({ IsNew }) => {
     const location = useLocation();
@@ -23,24 +25,45 @@ const EditMatch = ({ IsNew }) => {
     const [formData, setFormData] = useState({
         homeTeam: IsNew ? '' : homeTeam,
         awayTeam: IsNew ? '' : awayTeam,
-        date: IsNew ? '' : date,
+        date: IsNew ? '' : date.split('T')[0],
         venue: IsNew ? '' : venue,
         referee: IsNew ? '' : referee,
         linesman1: IsNew ? '' : linesman1,
         linesman2: IsNew ? '' : linesman2,
-        ticketPrice: IsNew ? '' : ticketPrice
+        ticketPrice: IsNew ? '' : ticketPrice,
+        homeTeamId: null,
+        awayTeamId: null
     });
 
     const [stadiums, setStadiums] = useState([]);
+    const [teams, setTeams] = useState([]);
+    const [venueId, setVenueId] = useState(null);
 
     useEffect(() => {
-        // Mock API call to get stadiums
         const fetchStadiums = async () => {
-            const data = ['Stadium A', 'Stadium B', 'Stadium C', 'Stadium D', 'Stadium E'];
-            setStadiums(data);
+            try {
+                const response = await fetch('http://localhost:8000/stadium?skip=0&limit=100');
+                const data = await response.json();
+                setStadiums(data);
+            } catch (error) {
+                toast.error('Error fetching stadiums');
+                console.error('Error fetching stadiums:', error);
+            }
+        };
+
+        const fetchTeams = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/team?skip=0&limit=100');
+                const data = await response.json();
+                setTeams(data);
+            } catch (error) {
+                toast.error('Error fetching teams');
+                console.error('Error fetching teams:', error);
+            }
         };
 
         fetchStadiums();
+        fetchTeams();
     }, []);
 
     const handleChange = (e) => {
@@ -49,24 +72,84 @@ const EditMatch = ({ IsNew }) => {
             ...formData,
             [name]: value
         });
+
+        if (name === 'venue') {
+            const selectedVenue = stadiums.find(stadium => stadium.name === value);
+            setVenueId(selectedVenue ? selectedVenue.id : null);
+        }
+
+        if (name === 'homeTeam') {
+            const selectedTeam = teams.find(team => team.name === value);
+            setFormData({
+                ...formData,
+                homeTeam: value,
+                homeTeamId: selectedTeam ? selectedTeam.id : null
+            });
+        }
+
+        if (name === 'awayTeam') {
+            const selectedTeam = teams.find(team => team.name === value);
+            setFormData({
+                ...formData,
+                awayTeam: value,
+                awayTeamId: selectedTeam ? selectedTeam.id : null
+            });
+        }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Make API call with formData
-        console.log('Form data to be sent to backend:', formData);
-        // Example API call
-        // fetch(IsNew ? '/api/addMatch' : '/api/updateMatch', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(formData)
-        // });
+        if (Object.values(formData).some(field => field === '') || !venueId) {
+            toast.error('Please fill in all fields.');
+            return;
+        }
+
+        if (IsNew && new Date(formData.date) < new Date()) {
+            toast.error('Date cannot be in the past for a new match.');
+            return;
+        }
+        
+        const matchData = {
+            home_team: formData.homeTeamId,
+            away_team: formData.awayTeamId,
+            date_time: formData.date + 'T15:00:00',
+            linesman_1: formData.linesman1,
+            linesman_2: formData.linesman2,
+            main_referee: formData.referee,
+            ticket_price: formData.ticketPrice,
+            venue_id: venueId
+        };
+        console.log(matchData);
+        
+        try {
+            const accessToken = localStorage.getItem('access_token');
+            const response = await fetch('http://localhost:8000/match', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify(matchData)
+            });
+
+            if (response.ok) {
+                toast.success('Match created successfully');
+            } else {
+                toast.error('Error creating match');
+                console.error('Error creating match:', response.statusText);
+            }
+        } catch (error) {
+            toast.error('Error creating match');
+            console.error('Error creating match:', error);
+        }
     };
+
+    const filteredAwayTeams = teams.filter(team => team.name !== formData.homeTeam);
+    const filteredHomeTeams = teams.filter(team => team.name !== formData.awayTeam);
 
     return (
         <div className='p-20'>
+            <ToastContainer />
             <p className='text-4xl gradientbg rounded-md mb-2 p-2 text-center font-bold'>{IsNew ? 'New Match' : 'Edit Match'} Details</p>
             <Match
                 matchId={matchId}
@@ -83,23 +166,31 @@ const EditMatch = ({ IsNew }) => {
                 <div className="grid grid-cols-2 gap-4 ">
                     <div>
                         <label className="block text-black font-bold mb-2">Home Team:</label>
-                        <input
-                            type="text"
+                        <select
                             name="homeTeam"
                             value={formData.homeTeam}
                             onChange={handleChange}
                             className="w-full p-2 border border-gray-300 rounded-md bg-primary"
-                        />
+                        >
+                            <option value="">Select Home Team</option>
+                            {filteredHomeTeams.map((team, index) => (
+                                <option key={index} value={team.name}>{team.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div>
                         <label className="block text-black font-bold mb-2">Away Team:</label>
-                        <input
-                            type="text"
+                        <select
                             name="awayTeam"
                             value={formData.awayTeam}
                             onChange={handleChange}
                             className="w-full p-2 border border-gray-300 rounded-md bg-primary"
-                        />
+                        >
+                            <option value="">Select Away Team</option>
+                            {filteredAwayTeams.map((team, index) => (
+                                <option key={index} value={team.name}>{team.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div>
                         <label className="block text-black font-bold mb-2">Date:</label>
@@ -119,8 +210,9 @@ const EditMatch = ({ IsNew }) => {
                             onChange={handleChange}
                             className="w-full p-2 border border-gray-300 rounded-md bg-primary"
                         >
+                            <option value="">Select Venue</option>
                             {stadiums.map((stadium, index) => (
-                                <option key={index} value={stadium}>{stadium}</option>
+                                <option key={index} value={stadium.name}>{stadium.name}</option>
                             ))}
                         </select>
                     </div>

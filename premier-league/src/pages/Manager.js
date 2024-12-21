@@ -4,43 +4,29 @@ import Match from '../components/Match/Match';
 const Manager = () => {
     const [matches, setMatches] = useState([]);
 
-    useEffect(() => {
-        // Simulate an API call
-        const fetchData = async () => {
-            // API call would go here
-            const staticData = [
-                {
-                    matchId: 1,
-                    homeTeam: 'Team A',
-                    awayTeam: 'Team B',
-                    date: '2023-10-01',
-                    venue: 'Stadium 1',
-                    referee: 'Referee 1',
-                    linesmen: ['Linesman 1', 'Linesman 2'],
-                    ticketPrice: 50,
-                    inReserve: false,
-                    InReservations: false,
-                    IsManager: true,
-                },
-                {
-                    matchId: 2,
-                    homeTeam: 'Team C',
-                    awayTeam: 'Team D',
-                    date: '2023-10-02',
-                    venue: 'Stadium 2',
-                    referee: 'Referee 2',
-                    linesmen: ['Linesman 3', 'Linesman 4'],
-                    ticketPrice: 60,
-                    inReserve: false,
-                    InReservations: true,
-                    IsManager: true
-                }
-            ];
-            setMatches(staticData);
-        };
-
-        fetchData();
-    }, []);
+useEffect(() => {
+    fetch('http://localhost:8000/match?skip=0&limit=100')
+        .then(response => response.json())
+        .then(data => {
+            const formattedMatches = data.map(match => ({
+                matchId: match.id,
+                homeTeam: match.home_team_rel.name,
+                awayTeam: match.away_team_rel.name,
+                homeScore: match.home_team_score,
+                awayScore: match.away_team_score,
+                date: match.date_time,
+                venue: match.stadium.name,
+                referee: match.main_referee,
+                linesmen: [match.linesman_1, match.linesman_2],
+                ticketPrice: match.ticket_price,
+                inReserve: false,
+                InReservations: false,
+                IsManager: true
+            }));
+            setMatches(formattedMatches);
+        })
+        .catch(error => console.error('Error fetching matches:', error));
+}, []);
 
     return (
         <div className='text-black p-20'>

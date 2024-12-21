@@ -2,14 +2,59 @@ import React from 'react';
 import './Match.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 
-const Match = ({ matchId, homeTeam, awayTeam, date, venue, referee, linesmen, ticketPrice, inReserve, InReservations, IsManager }) => {
+const Match = ({ matchId, homeTeam, awayTeam, date, venue, referee, linesmen, ticketPrice, inReserve, InReservations, IsManager, reservedSeatId, reservationId }) => {
     const navigate = useNavigate();
 
     const handleReserveClick = () => {
-        navigate(`/reserve?matchId=${matchId}`, { state: { IsManager } });
+        navigate(`/reserve`, {
+            state: {
+            IsManager,
+            matchId,
+            homeTeam,
+            awayTeam,
+            date,
+            venue,
+            referee,
+            linesman1: linesmen[0],
+            linesman2: linesmen[1],
+            ticketPrice
+            }
+        });
+    };
+    const handleCancelClick = () => {
+        navigate(`/reserve`, {
+            state: {
+            IsManager,
+            matchId,
+            homeTeam,
+            awayTeam,
+            date,
+            venue,
+            referee,
+            linesman1: linesmen[0],
+            linesman2: linesmen[1],
+            ticketPrice,
+            IsCancel: true,
+            reservedSeatId: reservedSeatId,
+            reservationId: reservationId
+            }
+        });
     };
     const handleEditClick = () => {
-        navigate(`/edit-match`, { state: { IsNew:"False" } });
+        navigate(`/edit-match/`, {
+            state: {
+                IsNew: "false",
+                matchId,
+                homeTeam,
+                awayTeam,
+                date,
+                venue,
+                referee,
+                linesman1: linesmen[0],
+                linesman2: linesmen[1],
+                ticketPrice
+            }
+        });
     };
 
     return (
@@ -32,7 +77,7 @@ const Match = ({ matchId, homeTeam, awayTeam, date, venue, referee, linesmen, ti
                 {IsManager ? <div className='flex space-around w-full p-4'>
                     <button className="edit-button w-2/5" onClick={handleEditClick}>Edit Match</button>
                     <button className="view-button w-2/5" onClick={handleReserveClick}>View Details</button>
-                </div> : <button className="reserve-button" onClick={handleReserveClick}>{InReservations ? "Cancel" : "Reserve"}</button>
+                </div> : <button className="reserve-button" onClick={!InReservations? handleReserveClick : handleCancelClick}>{InReservations ? "Cancel" : "Reserve"}</button>
                 }
             </div>
         </div>

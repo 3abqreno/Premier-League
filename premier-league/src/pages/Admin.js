@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import User from '../components/User'; // Assuming User component is in the same directory
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Admin = () => {
     const [users, setUsers] = useState([]);
 
-    // Dummy API function
+    // API function to fetch unapproved users
     const fetchUsers = async () => {
-        // This will be replaced with actual API call logic
-        return [
-            { id: 1, name: 'John Doe', role: 'User', manage: false },
-            { id: 2, name: 'Jane Smith', role: 'User', manage: false },
-            { id: 3, name: 'Alice Johnson', role: 'Manager', manage: false }
-        ];
+        try {
+            const token = localStorage.getItem('access_token'); // Retrieve the access token
+            const response = await fetch('http://0.0.0.0:8000/user/un-approved', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }            
+            const data = await response.json();
+            console.log(data);
+            // toast.success('Users fetched successfully!');
+            return data;
+        } catch (error) {
+            toast.error('Failed to fetch users');
+            console.error('Failed to fetch users:', error);
+            return [];
+        }
     };
 
     useEffect(() => {
@@ -25,10 +40,11 @@ const Admin = () => {
 
     return (
         <div className='text-black'>
+            <ToastContainer />
             <p className='text-4xl gradientbg rounded-md mb-2 p-2 text-center font-bold'>Users Awaiting Approval</p>
             <div className='gradientbg rounded-lg'>
                 {users.map(user => (
-                    <User key={user.id} name={user.name} role={user.role} manage={user.manage} />
+                    <User key={user.id} userId={user.id} name={user.username} role={user.role} manage={user.approved} />
                 ))}
             </div>
         </div>

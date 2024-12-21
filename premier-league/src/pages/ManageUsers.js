@@ -5,15 +5,31 @@ const ManageUsers = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        // Mock API call
         const fetchUsers = async () => {
-            // Simulate API call with static data
-            const staticData = [
-                { id: 1, name: 'John Doe', role: 'Admin', manage: true },
-                { id: 2, name: 'Jane Smith', role: 'Editor', manage: true },
-                { id: 3, name: 'Sam Johnson', role: 'Viewer', manage: true },
-            ];
-            setUsers(staticData);
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                console.error('No access token found');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8000/user', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setUsers(data);
+                } else {
+                    console.error('Failed to fetch users', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching users', error);
+            }
         };
 
         fetchUsers();
@@ -24,7 +40,7 @@ const ManageUsers = () => {
             <p className='text-4xl gradientbg rounded-md mb-2 p-2 text-center font-bold'>Manage Users</p>
             <div className='gradientbg rounded-lg'>
                 {users.map(user => (
-                    <User key={user.id} name={user.name} role={user.role} manage={user.manage} />
+                    user.role!== "admin" && <User key={user.id} userId={user.id} name={user.username} role={user.role} manage={true} />
                 ))}
             </div>
         </div>
