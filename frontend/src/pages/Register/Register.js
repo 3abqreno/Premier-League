@@ -56,7 +56,7 @@ const Register = () => {
     if (validateForm()) {
       try {
         console.log(formData);
-        const response = await fetch('http://0.0.0.0:8000/auth/register', {
+        const response = await fetch('http://localhost:8000/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
