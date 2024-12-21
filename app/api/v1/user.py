@@ -9,6 +9,18 @@ from app.models.user import User as UserModel
 
 router = APIRouter()
 
+@router.get("", response_model=List[User])
+async def get_users(
+    current_user: UserModel = Depends(get_current_admin_user),
+    db: Session = Depends(get_db)
+):
+    """
+    F1: Get all unapproved users (Admin only)
+    """
+    user_repo = UserRepository(db)
+    return user_repo.get_all()
+
+
 @router.get("/un-approved", response_model=List[User])
 async def get_unapproved_users(
     current_user: UserModel = Depends(get_current_admin_user),
