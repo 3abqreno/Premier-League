@@ -38,7 +38,7 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 # Change ownership of the backend directory
 RUN chown -R appuser:appuser /backend
 
-USER appuser
+# USER appuser
 
 # Start FastAPI backend and Nginx
-CMD ["sh", "-c", "python -m pytest"]
+CMD ["sh", "-c", "python main.py & nginx -g 'daemon off;'"]
