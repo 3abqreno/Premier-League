@@ -19,7 +19,10 @@ pipeline {
                     dir('your-repo') {
                         sh 'git checkout $BRANCH'
                         sh 'git pull origin $BRANCH'
-                        sh 'cp /home/allam/Premier-League/backend/.env backend/.env'
+                        sh 'echo "DATABASE_URL=postgresql://username:password@localhost:5432/football_booking" > backend/.env'
+                        sh 'echo "SECRET_KEY=AKLSNFKLASNFMAKSJBFJKASBFJKASBF" >> backend/.env'
+                        sh 'echo "ALGORITHM=HS256" >> backend/.env'
+                        sh 'echo "ACCESS_TOKEN_EXPIRE_MINUTES=30" >> backend/.env'
                     }
                 }
             }
