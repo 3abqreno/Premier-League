@@ -7,7 +7,7 @@ const User = ({ userId, name, role, manage }) => {
     const handleApprove = async () => {
         try {
             const token = localStorage.getItem('access_token'); // Retrieve the access token
-            const response = await fetch(`http://localhost:8000/user/approve/${userId}`, {
+            const response = await fetch(`http://localhost/api/user/approve/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const User = ({ userId, name, role, manage }) => {
     const handleDeny = async (manage) => {
         try {
             const token = localStorage.getItem('access_token'); // Retrieve the access token
-            const response = await fetch(`http://localhost:8000/user/${userId}`, {
+            const response = await fetch(`http://localhost/api/user/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

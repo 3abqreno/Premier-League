@@ -47,11 +47,11 @@ Development server with auto-reload
 ```
 uvicorn app.main:app --reload
 ```
-The API will be available at http://localhost:8000
+The API will be available at http://localhost/api
 
 ### API Documentation
-Swagger UI: http://localhost:8000/docs
-ReDoc: http://localhost:8000/redoc
+Swagger UI: http://localhost/api/docs
+ReDoc: http://localhost/api/redoc
 Default Admin User
 Username: admin
 Password: admin123

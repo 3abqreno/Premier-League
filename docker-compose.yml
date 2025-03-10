@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/backend  # Attach backend as a volume for fast development
+    restart: always
+    container_name: league

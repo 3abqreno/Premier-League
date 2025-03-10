@@ -59,7 +59,7 @@ const SeatGrid = ({ vacantSeats, IsManager, IsCreate, matchId, vacantSeatsId, Is
 
 
     //     try {
-    //         const response = await fetch("http://localhost:8000/reservation", {
+    //         const response = await fetch("http://localhost/api/reservation", {
     //             method: "POST",
     //             headers: {
     //                 "Content-Type": "application/json",
@@ -92,7 +92,7 @@ const SeatGrid = ({ vacantSeats, IsManager, IsCreate, matchId, vacantSeatsId, Is
         const accessToken = localStorage.getItem("access_token");
 
         try {
-            const response = await fetch(`http://localhost:8000/reservation/${reservationId}`, {
+            const response = await fetch(`http://localhost/api/reservation/${reservationId}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -142,7 +142,7 @@ const SeatGrid = ({ vacantSeats, IsManager, IsCreate, matchId, vacantSeatsId, Is
         });
     
         try {
-            const response = await fetch("http://localhost:8000/reservation", {
+            const response = await fetch("http://localhost/api/reservation", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

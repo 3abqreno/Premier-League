@@ -13,7 +13,7 @@ const ManageUsers = () => {
             }
 
             try {
-                const response = await fetch('http://localhost:8000/user', {
+                const response = await fetch('http://localhost/api/user', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

@@ -23,3 +23,6 @@ __pycache__/
 # Alembic
 alembic/versions/*
 !alembic/versions/.gitkeep
+
+# Pytest
+.pytest_cache/

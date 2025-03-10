@@ -10,7 +10,7 @@ const Admin = () => {
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('access_token'); // Retrieve the access token
-            const response = await fetch('http://localhost:8000/user/un-approved', {
+            const response = await fetch('http://localhost/api/user/un-approved', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

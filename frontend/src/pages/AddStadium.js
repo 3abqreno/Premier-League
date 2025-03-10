@@ -45,7 +45,7 @@ const AddStadium = () => {
         
         try {
             const accessToken = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8000/stadium', {
+            const response = await fetch('http://localhost/api/stadium', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -20,7 +20,7 @@ const UpdateProfile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('access_token'); // Retrieve the access token
-        const response = await fetch('http://localhost:8000/user/me', {
+        const response = await fetch('http://localhost/api/user/me', {
           method: 'GET',
           headers: {
 
@@ -64,7 +64,7 @@ const UpdateProfile = () => {
 
     try {      
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8000/user/me', {
+      const response = await fetch('http://localhost/api/user/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

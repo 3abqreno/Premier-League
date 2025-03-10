@@ -4,7 +4,7 @@ import Match from './Match';
 const Matches = () => {
   const [matches, setMatches] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:8000/match?skip=0&limit=100')
+    fetch('http://localhost/api/match?skip=0&limit=100')
       .then(response => response.json())
       .then(data => {
         const formattedMatches = data.map(match => ({

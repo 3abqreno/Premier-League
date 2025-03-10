@@ -29,7 +29,7 @@ const Reserve = () => {
     useEffect(() => {
         const fetchMatchDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/match/${matchId}`, {
+                const response = await fetch(`http://localhost/api/match/${matchId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

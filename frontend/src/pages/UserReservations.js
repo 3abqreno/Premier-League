@@ -12,7 +12,7 @@ const UserReservations = () => {
             try {
                 const token = localStorage.getItem("access_token");
                 const reservationsResponse = await fetch(
-                    "http://localhost:8000/reservation/me",
+                    "http://localhost/api/reservation/me",
                     {
                         method: "GET",
                         headers: {
@@ -32,7 +32,7 @@ const UserReservations = () => {
                 const matchesData = await Promise.all(
                     reservations.map(async (reservation) => {
                         const matchResponse = await fetch(
-                            `http://localhost:8000/match/${reservation.match_id}`,
+                            `http://localhost/api/match/${reservation.match_id}`,
                             {
                                 method: "GET",
                                 headers: {

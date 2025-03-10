@@ -42,7 +42,7 @@ const EditMatch = ({ IsNew }) => {
     useEffect(() => {
         const fetchStadiums = async () => {
             try {
-                const response = await fetch('http://localhost:8000/stadium?skip=0&limit=100');
+                const response = await fetch('http://localhost/api/stadium?skip=0&limit=100');
                 const data = await response.json();
                 setStadiums(data);
             } catch (error) {
@@ -53,7 +53,7 @@ const EditMatch = ({ IsNew }) => {
 
         const fetchTeams = async () => {
             try {
-                const response = await fetch('http://localhost:8000/team?skip=0&limit=100');
+                const response = await fetch('http://localhost/api/team?skip=0&limit=100');
                 const data = await response.json();
                 setTeams(data);
             } catch (error) {
@@ -123,7 +123,7 @@ const EditMatch = ({ IsNew }) => {
         
         try {
             const accessToken = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8000/match', {
+            const response = await fetch('http://localhost/api/match', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
