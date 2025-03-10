@@ -15,3 +15,5 @@ def test_division():
 def test_modulus():
     assert 10 % 3 == 1
     
+def test_wrong:
+    assert 1 == 2
